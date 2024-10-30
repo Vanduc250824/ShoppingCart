@@ -8,24 +8,35 @@ namespace ShoppingCart
 {
     public class ShoppingCart
     {
-        private List<Product> products = new List<Product>();
-        public void AddProduct(Product product) { 
-            products.Add(product);
-        }
-        public void RemoveProduct(Product product) {
-            products.Remove(product);
-        }
-        public decimal CaculateTotal() {
-            decimal total = 0;
-            foreach (var product in products)
+        public List<Product> Items { get; private set; } = new List<Product>();
+
+        public void AddProduct(Product product)
+        {
+            var existingProduct = Items.FirstOrDefault(p => p.Name == product.Name);
+            if (existingProduct != null)
             {
-                total += product.getPrice() * product.getQuantity();
+                existingProduct.Quantity += product.Quantity;
             }
-            return total;
+            else
+            {
+                Items.Add(new Product(product.Name, product.Price, product.Quantity, product.Image));
+            }
         }
-        public void ClearProduct(Product product) {
-            products.Clear();
+
+        public void RemoveProduct(Product product)
+        {
+            Items.RemoveAll(p => p.Name == product.Name);
         }
-        public List<Product> GetProducts() { return products; }
+
+        public decimal CalculateTotal()
+        {
+            return Items.Sum(p => p.Price * p.Quantity);
+        }
+
+        public void Clear()
+        {
+            Items.Clear();
+        }
     }
 }
+

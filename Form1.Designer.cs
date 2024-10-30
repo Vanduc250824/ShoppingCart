@@ -43,7 +43,7 @@
             button2 = new Button();
             groupBox2 = new GroupBox();
             listView4 = new ListView();
-            label1 = new Label();
+            lblTotal = new Label();
             button3 = new Button();
             groupBox1.SuspendLayout();
             flowLayoutPanel4.SuspendLayout();
@@ -75,7 +75,7 @@
             flowLayoutPanel4.Controls.Add(listView3);
             flowLayoutPanel4.Location = new Point(796, 37);
             flowLayoutPanel4.Name = "flowLayoutPanel4";
-            flowLayoutPanel4.Size = new Size(338, 347);
+            flowLayoutPanel4.Size = new Size(338, 350);
             flowLayoutPanel4.TabIndex = 9;
             flowLayoutPanel4.Paint += flowLayoutPanel4_Paint;
             // 
@@ -174,6 +174,7 @@
             button1.TabIndex = 1;
             button1.Text = "Thêm vào giỏ hàng";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // button2
             // 
@@ -183,6 +184,7 @@
             button2.TabIndex = 2;
             button2.Text = "Xóa khỏi giỏ hàng";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click_1;
             // 
             // groupBox2
             // 
@@ -207,12 +209,13 @@
             listView4.TabIndex = 2;
             listView4.UseCompatibleStateImageBehavior = false;
             // 
-            // label1
+            // lblTotal
             // 
-            label1.Location = new Point(24, 684);
-            label1.Name = "label1";
-            label1.Size = new Size(302, 56);
-            label1.TabIndex = 4;
+            lblTotal.Location = new Point(24, 684);
+            lblTotal.Name = "lblTotal";
+            lblTotal.Size = new Size(302, 56);
+            lblTotal.TabIndex = 4;
+            lblTotal.Click += lblTotal_Click;
             // 
             // button3
             // 
@@ -222,6 +225,7 @@
             button3.TabIndex = 5;
             button3.Text = "Thanh toán";
             button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // Form1
             // 
@@ -229,7 +233,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1219, 749);
             Controls.Add(button3);
-            Controls.Add(label1);
+            Controls.Add(lblTotal);
             Controls.Add(groupBox2);
             Controls.Add(button2);
             Controls.Add(button1);
@@ -254,7 +258,7 @@
         private Button button2;
         private GroupBox groupBox2;
         private ListView listView4;
-        private Label label1;
+        private Label lblTotal;
         private Button button3;
         private FlowLayoutPanel flowLayoutPanel4;
         private PictureBox pictureBox3;

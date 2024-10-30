@@ -8,21 +8,17 @@ namespace ShoppingCart
 {
     public class Product
     {
-        private String Name { get; set; }
-        private decimal Price { get; set; }
-        private int Quantity { get; set; }
-        private Image image { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public int Quantity { get; set; }
+        public Image Image { get; set; }
 
-        public Product(String _Name, decimal _Price, int _Quantity, Image _image) {
-            this.Name = _Name;
-            this.Price = _Price;
-            this.Quantity = _Quantity;
-            this.image = _image;
-        }
-        public decimal getPrice()
+        public Product(string name, decimal price, int quantity, Image image)
         {
-            return Price;
+            Name = name;
+            Price = price;
+            Quantity = quantity;
+            Image = image;
         }
-        public int getQuantity() { return Quantity; }
     }
 }
