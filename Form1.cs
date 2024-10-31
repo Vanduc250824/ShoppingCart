@@ -1,213 +1,121 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 
+
 namespace ShoppingCart
 {
+
     public partial class Form1 : Form
     {
         private ShoppingCart cart = new ShoppingCart();
         private List<Product> products = new List<Product>();
-        private bool isBorderVisible = false;
         public Form1()
         {
             InitializeComponent();
+            InitializeDataGridView();
+            InitializeDataGridView2();
             LoadProducts();
-            SetupListView();
-            UpdateCartDisplay();
+        }
 
+        private void InitializeDataGridView()
+        {
 
+            dataGridView1.Columns.Clear();
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { Name = "Image", HeaderText = "Ảnh" });
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { Name = "Name", HeaderText = "Tên Sản Phẩm" });
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { Name = "Price", HeaderText = "Giá" });
+            dataGridView1.Columns.Add(new DataGridViewTextBoxColumn { Name = "Quantity", HeaderText = "Số Lượng" });
 
-            // Gán sự kiện cho các flowLayoutPanels
-            flowLayoutPanel1.Click += new EventHandler(flowLayoutPanel1_Click);
-            flowLayoutPanel1.Paint += new PaintEventHandler(flowLayoutPanel1_Paint);
-            flowLayoutPanel2.Click += new EventHandler(flowLayoutPanel2_Click);
-            flowLayoutPanel2.Paint += new PaintEventHandler(flowLayoutPanel2_Paint);
-            flowLayoutPanel4.Click += new EventHandler(flowLayoutPanel4_Click);
-            flowLayoutPanel4.Paint += new PaintEventHandler(flowLayoutPanel4_Paint);
+            // Set full row selection
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.ReadOnly = true;
+
+        }
+        private void InitializeDataGridView2()
+        {
+            dataGridView2.Columns.Clear();
+            dataGridView2.Columns.Add(new DataGridViewTextBoxColumn { Name = "Name", HeaderText = "Tên Sản Phẩm" });
+            dataGridView2.Columns.Add(new DataGridViewTextBoxColumn { Name = "Price", HeaderText = "Giá" });
+            dataGridView2.Columns.Add(new DataGridViewTextBoxColumn { Name = "Quantity", HeaderText = "Số Lượng" });
+            dataGridView2.Columns.Add(new DataGridViewTextBoxColumn { Name = "Total", HeaderText = "Tổng Tiền" });
+
+            dataGridView2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView2.ReadOnly = true;
         }
         private void LoadProducts()
         {
-            // Define sample products
-            products.Add(new Product("OMO", 100000, 1, Image.FromFile("D:\\Code Lung Tung\\C and C++\\C#\\ShoppingCart\\OMO.png")));
-            products.Add(new Product("ARIEL", 150000, 1, Image.FromFile("D:\\Code Lung Tung\\C and C++\\C#\\ShoppingCart\\ARIEL.jpg")));
-            products.Add(new Product("ABA", 200000, 1, Image.FromFile("D:\\Code Lung Tung\\C and C++\\C#\\ShoppingCart\\ABA.jpg")));
+            products.Add(new Product(null,"Product 1", 100000, 1));
+            products.Add(new Product(null,"Product 2", 200000, 1));
+            products.Add(new Product(null,"Product 3", 150000, 1));
 
-            // Load products into flowLayoutPanel controls
-            DisplayProduct(flowLayoutPanel1, products[0]);
-            DisplayProduct(flowLayoutPanel2, products[1]);
-            DisplayProduct(flowLayoutPanel4, products[2]);
-        }
-        private void DisplayProduct(FlowLayoutPanel panel, Product product)
-        {
-            PictureBox pictureBox = (PictureBox)panel.Controls[0];
-            ListView listView = (ListView)panel.Controls[1];
+            dataGridView1.Rows.Clear();
 
-            pictureBox.Image = product.Image;
-            listView.Items.Clear();
-            listView.Items.Add(new ListViewItem(new string[] { product.Name, product.Price.ToString("C"), product.Quantity.ToString() }));
-        }
-        private void SetupListView()
-        {
-            listView1.View = View.Details;
-            listView1.Columns.Add("Tên sản phẩm", 150);
-            listView1.Columns.Add("Giá", 100);
-            listView1.Columns.Add("Số lượng", 100);
-        }
-        private void UpdateCartDisplay()
-        {
-            listView1.Items.Clear();
-            foreach (var product in cart.Items)
+            foreach (var product in products)
             {
-                var item = new ListViewItem(new string[] { product.Name, product.Price.ToString(), product.Quantity.ToString() });
-                listView1.Items.Add(item);
+                dataGridView1.Rows.Add(product.Image, product.Name, product.Price, product.Quantity);
             }
-
-            // Cập nhật tổng giá trị
-            lblTotal.Text = $"Tổng giá trị: {cart.CalculateTotal():C}";
-        }
-        private void groupBox3_Enter(object sender, EventArgs e)
-        {
-
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-            if (isBorderVisible)
+            if (dataGridView1.SelectedRows.Count > 0)
             {
-                // Vẽ viền nếu trạng thái là true
-                Pen pen = new Pen(Color.Blue, 2); // Màu và độ dày của viền
-                e.Graphics.DrawRectangle(pen, 0, 0, flowLayoutPanel1.Width - 1, flowLayoutPanel1.Height - 1); // Vẽ viền
+                var selectedRow = dataGridView1.SelectedRows[0];
+                string name = selectedRow.Cells["Name"].Value.ToString();
+                double price = Convert.ToDouble(selectedRow.Cells["Price"].Value);
+                int quantity = Convert.ToInt32(selectedRow.Cells["Quantity"].Value);
+
+                var product = new Product(null,name, price, quantity);
+                cart.AddProduct(product);
+
+                UpdateCartView();
             }
-        }
-        private void flowLayoutPanel1_Click(object sender, EventArgs e)
-        {
-            // Đặt màu khung cho FlowLayoutPanel
-            isBorderVisible = !isBorderVisible;
-
-            // Gọi lại sự kiện Paint để vẽ lại viền
-            flowLayoutPanel1.Invalidate();
-        }
-        private void flowLayoutPanel2_Click(object sender, EventArgs e)
-        {
-            // Đảo ngược trạng thái hiển thị viền
-            isBorderVisible = !isBorderVisible;
-
-            // Gọi lại sự kiện Paint để vẽ lại viền
-            flowLayoutPanel2.Invalidate();
-        }
-        private void flowLayoutPanel2_Paint(object sender, PaintEventArgs e)
-        {
-            if (isBorderVisible)
-            {
-                // Vẽ viền nếu trạng thái là true
-                Pen pen = new Pen(Color.Blue, 2);
-                e.Graphics.DrawRectangle(pen, 0, 0, flowLayoutPanel1.Width - 1, flowLayoutPanel1.Height - 1);
-            }
-        }
-
-        private void flowLayoutPanel4_Paint(object sender, PaintEventArgs e)
-        {
-            if (isBorderVisible)
-            {
-                // Vẽ viền nếu trạng thái là true
-                Pen pen = new Pen(Color.Blue, 2);
-                e.Graphics.DrawRectangle(pen, 0, 0, flowLayoutPanel1.Width - 1, flowLayoutPanel1.Height - 1);
-            }
-        }
-        private void flowLayoutPanel4_Click(object sender, EventArgs e)
-        {
-            // Đảo ngược trạng thái hiển thị viền
-            isBorderVisible = !isBorderVisible;
-
-            // Gọi lại sự kiện Paint để vẽ lại viền
-            flowLayoutPanel4.Invalidate();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (cart.Items.Any())
+            if (dataGridView2.SelectedRows.Count > 0)
             {
-                MessageBox.Show($"Thanh toán thành công! Tổng cộng: {cart.CalculateTotal():C}");
-                cart.Clear();
-                UpdateCartDisplay();
-            }
-            else
-            {
-                MessageBox.Show("Giỏ hàng trống.");
-            }
-        }
+                string name = dataGridView2.SelectedRows[0].Cells["Name"].Value.ToString();
+                var productToRemove = cart.Items.FirstOrDefault(p => p.Name == name);
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (listView1.SelectedItems.Count > 0)
-            {
-                string selectedProductName = listView1.SelectedItems[0].SubItems[0].Text;
-                var product = products.FirstOrDefault(p => p.Name == selectedProductName);
-
-                if (product != null)
+                if (productToRemove != null)
                 {
-                    cart.AddProduct(product);
-                    UpdateCartDisplay();
+                    cart.RemoveProduct(productToRemove);
                 }
-            }
-            else
-            {
-                MessageBox.Show("Vui lòng chọn sản phẩm để thêm vào giỏ hàng.");
+
+                UpdateCartView();
             }
         }
-
-        private void button2_Click_1(object sender, EventArgs e)
+        private void UpdateCartView()
         {
-            if (listView4.SelectedItems.Count > 0)
-            {
-                string selectedProductName = listView4.SelectedItems[0].SubItems[0].Text;
-                var product = cart.Items.FirstOrDefault(p => p.Name == selectedProductName);
+            dataGridView2.Rows.Clear(); // Xóa các hàng hiện có trong DataGridView
 
-                if (product != null)
-                {
-                    cart.RemoveProduct(product);
-                    UpdateCartDisplay();
-                }
-            }
-            else
-            {
-                MessageBox.Show("Vui lòng chọn sản phẩm để xóa khỏi giỏ hàng.");
-            }
-        }
-
-        private void lblTotal_Click(object sender, EventArgs e)
-        {
-            listView4.Items.Clear();
             foreach (var item in cart.Items)
             {
-                var listViewItem = new ListViewItem(new string[] { item.Name, item.Price.ToString("C"), item.Quantity.ToString() });
-                listView4.Items.Add(listViewItem);
+                dataGridView2.Rows.Add(item.Name, item.Price, item.Quantity, item.Price * item.Quantity);
             }
 
-            lblTotal.Text = $"Tổng giá trị: {cart.CalculateTotal():C}";
+           
+            double total = cart.CalculateTotal();
+            String setTotal = total.ToString();
+            lbThanhToan.Text = $"Tổng Tiền: {setTotal}";
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            
+            MessageBox.Show("Thanh toán thành công");
+            cart.Clear();
+            UpdateCartView();
+        }
+
+        private void lbThanhToan_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

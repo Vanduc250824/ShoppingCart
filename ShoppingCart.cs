@@ -15,11 +15,11 @@ namespace ShoppingCart
             var existingProduct = Items.FirstOrDefault(p => p.Name == product.Name);
             if (existingProduct != null)
             {
-                existingProduct.Quantity += product.Quantity;
+                existingProduct.Quantity += product.Quantity; // Cập nhật số lượng
             }
             else
             {
-                Items.Add(new Product(product.Name, product.Price, product.Quantity, product.Image));
+                Items.Add(new Product(product.Image, product.Name, product.Price, product.Quantity)); 
             }
         }
 
@@ -28,9 +28,9 @@ namespace ShoppingCart
             Items.RemoveAll(p => p.Name == product.Name);
         }
 
-        public decimal CalculateTotal()
+        public double CalculateTotal() 
         {
-            return Items.Sum(p => p.Price * p.Quantity);
+            return Items.Sum(p => p.Price * p.Quantity); 
         }
 
         public void Clear()
